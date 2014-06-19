@@ -1,0 +1,63 @@
+Title
+========================================================
+
+One thing that people regularly do is quantify how much of a particular activity they do, 
+but they rarely quantify how well they do it. In this project, your goal will be to use data 
+from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
+They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+More information is available from the website here: 
+http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+
+
+```{r cache=TRUE}
+library(caret)
+library(doParallel)
+
+cl <- makeCluster(4)  # Use 4 cores
+registerDoParallel(cl)
+
+set.seed(123)
+pml <- read.csv("pml-training.csv", header=TRUE)
+pmltest <- read.csv("pml-testing.csv", header=TRUE)
+
+# Reducing dataset
+NAs <- apply(pml,2,function(x) {sum(is.na(x))}) 
+
+validData <- pml[,which(NAs < 19216)]
+
+NAs <- apply(validData,2,function(x) {sum(is.na(x))}) 
+
+sum(NAs) == 0                    # True! No more NAs in validData
+length(validData)                # 93
+validData <- validData[,8:93]
+length(validData)                # 86
+
+vd <- validData[sapply(validData[-86], function(x) is.integer(x) | is.numeric(x))] 
+length(vd)                       # 53
+
+a <- names(vd)
+c <- pmltest[a[-53]]
+
+# Create trianing and cross validation sets
+trainindex <- createDataPartition(vd$classe, p = 0.5)[[1]]
+training <- vd[trainindex,]
+crossval <- vd[-trainindex,]
+
+
+
+
+ptm <- proc.time()
+d <- ""
+modFit <- train(training$classe ~ .,  
+                method = "rf",
+                trControl = trainControl(method = "cv", number = 4, allowParallel=T, verboseIter=F), 
+                data = training[,-53])
+proc.time() - ptm
+modFit
+
+confusionMatrix(crossval$classe,predict(modFit,crossval[,-53]))
+
+#d <- predict(modFit, c)
+#d == res[[1]]
+```
+
