@@ -77,27 +77,17 @@ training <- vd[trainindex, ]
 crossval <- vd[-trainindex, ]
 
 
-res <- strsplit("B A B A A E D B A A B C B A E E A B B B", " ")
 
 ptm <- proc.time()
 d <- ""
 modFit <- train(training$classe ~ ., method = "rf", trControl = trainControl(method = "cv", 
     number = 4, allowParallel = T, verboseIter = F), data = training[, -53])
-```
-
-```
-## Loading required package: randomForest
-## randomForest 4.6-7
-## Type rfNews() to see new features/changes/bug fixes.
-```
-
-```r
 proc.time() - ptm
 ```
 
 ```
 ##    user  system elapsed 
-##   44.64    0.34  201.85
+##   44.90    0.37  202.95
 ```
 
 ```r
@@ -119,9 +109,9 @@ modFit
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
-##   2     1         1      0.002        0.003   
-##   30    1         1      0.003        0.004   
-##   50    1         1      0.005        0.007   
+##   2     1         1      0.003        0.003   
+##   30    1         1      0.004        0.004   
+##   50    1         1      0.005        0.006   
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.
@@ -168,13 +158,8 @@ confusionMatrix(crossval$classe, predict(modFit, crossval[, -53]))
 
 ```r
 
-d <- predict(modFit, c)
-d == res[[1]]
-```
 
-```
-##  [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
-## [15] TRUE TRUE TRUE TRUE TRUE TRUE
+# d <- predict(modFit, c) d == res[[1]]
 ```
 
 

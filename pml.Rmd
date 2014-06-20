@@ -44,7 +44,6 @@ training <- vd[trainindex,]
 crossval <- vd[-trainindex,]
 
 
-res <- strsplit("B A B A A E D B A A B C B A E E A B B B", ' ')
 
 ptm <- proc.time()
 d <- ""
@@ -57,7 +56,9 @@ modFit
 
 confusionMatrix(crossval$classe,predict(modFit,crossval[,-53]))
 
-d <- predict(modFit, c)
-d == res[[1]]
+
+#d <- predict(modFit, c)
+#d == res[[1]]
+
 ```
 
