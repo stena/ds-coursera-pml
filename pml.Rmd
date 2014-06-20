@@ -8,8 +8,12 @@ They were asked to perform barbell lifts correctly and incorrectly in 5 differen
 More information is available from the website here: 
 http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
 
+```{r setup, include=FALSE}
+opts_chunk$set(cache=TRUE)
+``` 
 
-```{r cache=TRUE}
+
+```{r}
 library(caret)
 library(doParallel)
 
@@ -45,13 +49,13 @@ crossval <- vd[-trainindex,]
 
 
 
-ptm <- proc.time()
-d <- ""
+#ptm <- proc.time()
+#d <- ""
 modFit <- train(training$classe ~ .,  
                 method = "rf",
                 trControl = trainControl(method = "cv", number = 4, allowParallel=T, verboseIter=F), 
                 data = training[,-53])
-proc.time() - ptm
+#proc.time() - ptm
 modFit
 
 confusionMatrix(crossval$classe,predict(modFit,crossval[,-53]))
