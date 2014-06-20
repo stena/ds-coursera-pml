@@ -247,18 +247,11 @@ crossval &lt;- vd[-trainindex, ]
 
 
 
-ptm &lt;- proc.time()
-d &lt;- &quot;&quot;
+# ptm &lt;- proc.time() d &lt;- &#39;&#39;
 modFit &lt;- train(training$classe ~ ., method = &quot;rf&quot;, trControl = trainControl(method = &quot;cv&quot;, 
     number = 4, allowParallel = T, verboseIter = F), data = training[, -53])
-proc.time() - ptm
-</code></pre>
-
-<pre><code>##    user  system elapsed 
-##   44.90    0.37  202.95
-</code></pre>
-
-<pre><code class="r">modFit
+# proc.time() - ptm
+modFit
 </code></pre>
 
 <pre><code>## Random Forest 
@@ -275,9 +268,9 @@ proc.time() - ptm
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
-##   2     1         1      0.003        0.003   
-##   30    1         1      0.004        0.004   
-##   50    1         1      0.005        0.006   
+##   2     1         1      0.003        0.004   
+##   30    1         1      0.004        0.005   
+##   50    1         1      0.006        0.007   
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.

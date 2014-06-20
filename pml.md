@@ -10,6 +10,9 @@ http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting E
 
 
 
+
+
+
 ```r
 library(caret)
 library(doParallel)
@@ -78,19 +81,10 @@ crossval <- vd[-trainindex, ]
 
 
 
-ptm <- proc.time()
-d <- ""
+# ptm <- proc.time() d <- ''
 modFit <- train(training$classe ~ ., method = "rf", trControl = trainControl(method = "cv", 
     number = 4, allowParallel = T, verboseIter = F), data = training[, -53])
-proc.time() - ptm
-```
-
-```
-##    user  system elapsed 
-##   44.90    0.37  202.95
-```
-
-```r
+# proc.time() - ptm
 modFit
 ```
 
@@ -109,9 +103,9 @@ modFit
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
-##   2     1         1      0.003        0.003   
-##   30    1         1      0.004        0.004   
-##   50    1         1      0.005        0.006   
+##   2     1         1      0.003        0.004   
+##   30    1         1      0.004        0.005   
+##   50    1         1      0.006        0.007   
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.
