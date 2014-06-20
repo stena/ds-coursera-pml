@@ -12,24 +12,7 @@ http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting E
 
 ```r
 library(caret)
-```
-
-```
-## Loading required package: lattice
-## Loading required package: ggplot2
-```
-
-```r
 library(doParallel)
-```
-
-```
-## Loading required package: foreach
-## Loading required package: iterators
-## Loading required package: parallel
-```
-
-```r
 
 cl <- makeCluster(4)  # Use 4 cores
 registerDoParallel(cl)
@@ -95,26 +78,16 @@ crossval <- vd[-trainindex, ]
 
 
 
-
 ptm <- proc.time()
 d <- ""
 modFit <- train(training$classe ~ ., method = "rf", trControl = trainControl(method = "cv", 
     number = 4, allowParallel = T, verboseIter = F), data = training[, -53])
-```
-
-```
-## Loading required package: randomForest
-## randomForest 4.6-7
-## Type rfNews() to see new features/changes/bug fixes.
-```
-
-```r
 proc.time() - ptm
 ```
 
 ```
 ##    user  system elapsed 
-##   45.39    0.47  204.61
+##   44.90    0.37  202.95
 ```
 
 ```r
@@ -136,9 +109,9 @@ modFit
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
-##   2     1         1      0.002        0.003   
-##   30    1         1      0.003        0.003   
-##   50    1         1      0.005        0.007   
+##   2     1         1      0.003        0.003   
+##   30    1         1      0.004        0.004   
+##   50    1         1      0.005        0.006   
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.
@@ -184,6 +157,7 @@ confusionMatrix(crossval$classe, predict(modFit, crossval[, -53]))
 ```
 
 ```r
+
 
 # d <- predict(modFit, c) d == res[[1]]
 ```

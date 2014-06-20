@@ -45,7 +45,6 @@ crossval <- vd[-trainindex,]
 
 
 
-
 ptm <- proc.time()
 d <- ""
 modFit <- train(training$classe ~ .,  
@@ -57,7 +56,9 @@ modFit
 
 confusionMatrix(crossval$classe,predict(modFit,crossval[,-53]))
 
+
 #d <- predict(modFit, c)
 #d == res[[1]]
+
 ```
 
