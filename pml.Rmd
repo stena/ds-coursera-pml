@@ -1,30 +1,33 @@
-Title
+Practical Machine Learning Course Project
 ========================================================
 
-One thing that people regularly do is quantify how much of a particular activity they do, 
-but they rarely quantify how well they do it. In this project, your goal will be to use data 
-from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
-They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
-More information is available from the website here: 
-http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+I decided to use random forests in building my model, and I chose cv, cross-validate, as resampling method, as the default resampling method, bootstrapping, is slow. No preprocessing was used.
+ 
+Cross-validation set was used to estimate the out-of-sample error, which was 0.0098.
+ 
+After removing the columns containing mostly NAs I was able to reduce the variables down to 93, and since I was studying the sensor data I dropped the first 7 columns, getting down to 86 variables. By choosing only the variables containing numeric data, I was able to reduce the variable set down to 53, including the predictable 'classe' variable. So finally I had 52 predictors, which was used to predict the 'classe' variable. 
 
-```{r setup, include=FALSE}
-opts_chunk$set(cache=TRUE)
-``` 
+Test predictions: 20/20
+
+Time to fit model: ~3 minutes
 
 
-```{r}
+```{r cache = TRUE}
 library(caret)
 library(doParallel)
 
+
+set.seed(123)
+
+# Use parallel processing
 cl <- makeCluster(4)  # Use 4 cores
 registerDoParallel(cl)
 
-set.seed(123)
+# Read the data
 pml <- read.csv("pml-training.csv", header=TRUE)
 pmltest <- read.csv("pml-testing.csv", header=TRUE)
 
-# Reducing dataset
+# Reducing variables from dataset
 NAs <- apply(pml,2,function(x) {sum(is.na(x))}) 
 
 validData <- pml[,which(NAs < 19216)]
@@ -39,30 +42,37 @@ length(validData)                # 86
 vd <- validData[sapply(validData[-86], function(x) is.integer(x) | is.numeric(x))] 
 length(vd)                       # 53
 
+# Use the same variables in the test set less 'classe'
 a <- names(vd)
 c <- pmltest[a[-53]]
 
-# Create trianing and cross validation sets
+# Create training and cross validation sets
 trainindex <- createDataPartition(vd$classe, p = 0.5)[[1]]
 training <- vd[trainindex,]
 crossval <- vd[-trainindex,]
 
+# Take time
+ptm <- proc.time()
 
-
-#ptm <- proc.time()
-#d <- ""
-modFit <- train(training$classe ~ .,  
+# Train the model
+modFit <- train(classe ~ .,  
                 method = "rf",
-                trControl = trainControl(method = "cv", number = 4, allowParallel=T, verboseIter=F), 
-                data = training[,-53])
-#proc.time() - ptm
+                trControl = trainControl(method = "cv", number = 4, allowParallel=T), 
+                data = training)
+# Report time
+proc.time() - ptm
+
 modFit
 
-confusionMatrix(crossval$classe,predict(modFit,crossval[,-53]))
+confuse <- confusionMatrix(crossval$classe,predict(modFit,crossval))
+confuse
 
+# Out-of-sample error
+outofsample <- 1 - confuse$overall['Accuracy'][[1]]
+outofsample
 
-#d <- predict(modFit, c)
-#d == res[[1]]
+d <- predict(modFit, c)
+d
 
 ```
 
